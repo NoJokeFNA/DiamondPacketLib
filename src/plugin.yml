@@ -1,0 +1,5 @@
+name: DiamondPacketLib
+author: Timeox2k
+version: 1.0
+main: de.diamondprotector.timeox2k.DiamondPacketLib
+api-version: 1.13
