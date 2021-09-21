@@ -13,37 +13,23 @@ public class PacketInjector {
 	private ModernPacketReader modernPacketReader;
 
 	public void injectPlayer(final Player player) {
-      String formatedVersion =
-          DiamondPacketLib.getInstance()
-              .getVersionFormater()
-              .getVersionString(
-                  Bukkit.getServer()
-                      .getClass()
-                      .getPackage()
-                      .getName()
-                      .replace("org.bukkit.craftbukkit.", ""));
+		String formatedVersion = DiamondPacketLib.getInstance().getVersionFormater().getVersionString(
+				Bukkit.getServer().getClass().getPackage().getName().replace("org.bukkit.craftbukkit.", ""));
 
-      if (formatedVersion.equalsIgnoreCase("modern")) {
-          this.modernPacketReader = new ModernPacketReader();
-          modernPacketReader.injectPlayer(player);
-        } else {
-          this.legacyPacketReader = new LegacyPacketReader();
-          legacyPacketReader.injectPlayer(player);
-        }
-  }
+		if (formatedVersion.equalsIgnoreCase("modern")) {
+			this.modernPacketReader = new ModernPacketReader();
+			modernPacketReader.injectPlayer(player);
+		} else {
+			this.legacyPacketReader = new LegacyPacketReader();
+			legacyPacketReader.injectPlayer(player);
+		}
+	}
 
 	public void uninjectPlayer(final Player player) {
-	      String formatedVersion =
-	              DiamondPacketLib.getInstance()
-	                  .getVersionFormater()
-	                  .getVersionString(
-	                      Bukkit.getServer()
-	                          .getClass()
-	                          .getPackage()
-	                          .getName()
-	                          .replace("org.bukkit.craftbukkit.", ""));
+		String formatedVersion = DiamondPacketLib.getInstance().getVersionFormater().getVersionString(
+				Bukkit.getServer().getClass().getPackage().getName().replace("org.bukkit.craftbukkit.", ""));
 
-	      if (formatedVersion.equalsIgnoreCase("modern")) {
+		if (formatedVersion.equalsIgnoreCase("modern")) {
 			this.modernPacketReader = new ModernPacketReader();
 			modernPacketReader.removePlayer(player);
 		} else {

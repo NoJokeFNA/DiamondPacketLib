@@ -8,20 +8,20 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import de.diamondprotector.timeox2k.DiamondPacketLib;
 
-public class PlayerJoinQuitEvent implements Listener{
-	
+public class PlayerJoinQuitEvent implements Listener {
+
 	@EventHandler
 	public void onJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		
+
 		DiamondPacketLib.getInstance().getPacketInjector().injectPlayer(player);
 	}
 
 	@EventHandler
 	public void onQuit(PlayerQuitEvent event) {
 		final Player player = event.getPlayer();
-		
+
 		DiamondPacketLib.getInstance().getPacketInjector().uninjectPlayer(player);
 	}
-	
+
 }

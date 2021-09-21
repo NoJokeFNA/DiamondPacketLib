@@ -14,89 +14,79 @@ import io.netty.channel.ChannelPromise;
 
 public class ModernPacketReader {
 
-  public void removePlayer(final Player player) {
+	public void removePlayer(final Player player) {
 
-    try {
-      final Object handle = player.getClass().getMethod("getHandle").invoke(player);
-      final Object playerConnection = handle.getClass().getField("b").get(handle);
-      final Object networkManager = playerConnection.getClass().getField("a").get(playerConnection);
-      final Channel channel = (Channel) networkManager.getClass().getField("k").get(networkManager);
-      channel
-          .eventLoop()
-          .submit(
-              () -> {
-                channel.pipeline().remove( "DiamondPacketLib" + player.getName());
-                return null;
-              });
-    } catch (final Exception exception) {
-      exception.printStackTrace();
-    }
-  }
+		try {
+			final Object handle = player.getClass().getMethod("getHandle").invoke(player);
+			final Object playerConnection = handle.getClass().getField("b").get(handle);
+			final Object networkManager = playerConnection.getClass().getField("a").get(playerConnection);
+			final Channel channel = (Channel) networkManager.getClass().getField("k").get(networkManager);
+			channel.eventLoop().submit(() -> {
+				channel.pipeline().remove("DiamondPacketLib" + player.getName());
+				return null;
+			});
+		} catch (final Exception exception) {
+			exception.printStackTrace();
+		}
+	}
 
-  public void injectPlayer(final Player player) {
-    try {
-      final Object handle = player.getClass().getMethod("getHandle").invoke(player);
-      final Object playerConnection = handle.getClass().getField("b").get(handle);
-      final Object networkManager = playerConnection.getClass().getField("a").get(playerConnection);
-      final Channel channel = (Channel) networkManager.getClass().getField("k").get(networkManager);
+	public void injectPlayer(final Player player) {
+		try {
+			final Object handle = player.getClass().getMethod("getHandle").invoke(player);
+			final Object playerConnection = handle.getClass().getField("b").get(handle);
+			final Object networkManager = playerConnection.getClass().getField("a").get(playerConnection);
+			final Channel channel = (Channel) networkManager.getClass().getField("k").get(networkManager);
 
-      final ChannelDuplexHandler channelDuplexHandler =
-          new ChannelDuplexHandler() {
+			final ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
 
-            @Override
-            public void channelRead(
-                final ChannelHandlerContext channelHandlerContext, final Object packet)
-                throws Exception {
+				@Override
+				public void channelRead(final ChannelHandlerContext channelHandlerContext, final Object packet)
+						throws Exception {
 
-            	try {
-            		  DiamondPacketReceiveEvent diamondPacketReceiveEvent =
-                              new DiamondPacketReceiveEvent(player, packet, channel);
-            		  
-                      Bukkit.getScheduler()
-                              .runTask(
-                                      DiamondPacketLib.getInstance(),
-                                      () -> Bukkit.getPluginManager().callEvent(diamondPacketReceiveEvent));
+					try {
+						DiamondPacketReceiveEvent diamondPacketReceiveEvent = new DiamondPacketReceiveEvent(player,
+								packet, channel);
 
-                      if(diamondPacketReceiveEvent.isCancelled()) {
-                        return;
-                      }
-				} catch (Exception exception) {
-					exception.printStackTrace();
-				}
+						Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(),
+								() -> Bukkit.getPluginManager().callEvent(diamondPacketReceiveEvent));
 
-              super.channelRead(channelHandlerContext, packet);
-            }
-
-            @Override
-            public void write(
-                final ChannelHandlerContext channelHandlerContext,
-                final Object packet,
-                final ChannelPromise channelPromise)
-                throws Exception {
-
-            	try {
-            		DiamondPacketSendEvent diamondPacketSendEvent = new DiamondPacketSendEvent(player, packet,
-							channel);
-
-					// Has to be made with a scheduler as Spigot throws Issues without
-					Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(),
-							() -> Bukkit.getPluginManager().callEvent(diamondPacketSendEvent));
-
-					if (diamondPacketSendEvent.isCancelled()) {
-						return;
+						if (diamondPacketReceiveEvent.isCancelled()) {
+							return;
+						}
+					} catch (Exception exception) {
+						exception.printStackTrace();
 					}
-				} catch (Exception exception) {
-					exception.printStackTrace();
+
+					super.channelRead(channelHandlerContext, packet);
 				}
-              super.write(channelHandlerContext, packet, channelPromise);
-            }
-          };
 
-      final ChannelPipeline channelPipeline = channel.pipeline();
-      channelPipeline.addBefore("packet_handler", "DiamondPacketLib" + player.getName(), channelDuplexHandler);
+				@Override
+				public void write(final ChannelHandlerContext channelHandlerContext, final Object packet,
+						final ChannelPromise channelPromise) throws Exception {
 
-    } catch (final Exception exception) {
-      exception.printStackTrace();
-    }
-  }
+					try {
+						DiamondPacketSendEvent diamondPacketSendEvent = new DiamondPacketSendEvent(player, packet,
+								channel);
+
+						// Has to be made with a scheduler as Spigot throws Issues without
+						Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(),
+								() -> Bukkit.getPluginManager().callEvent(diamondPacketSendEvent));
+
+						if (diamondPacketSendEvent.isCancelled()) {
+							return;
+						}
+					} catch (Exception exception) {
+						exception.printStackTrace();
+					}
+					super.write(channelHandlerContext, packet, channelPromise);
+				}
+			};
+
+			final ChannelPipeline channelPipeline = channel.pipeline();
+			channelPipeline.addBefore("packet_handler", "DiamondPacketLib" + player.getName(), channelDuplexHandler);
+
+		} catch (final Exception exception) {
+			exception.printStackTrace();
+		}
+	}
 }

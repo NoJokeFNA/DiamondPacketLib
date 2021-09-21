@@ -8,13 +8,12 @@ import de.diamondprotector.timeox2k.nms.PacketInjector;
 import de.diamondprotector.timeox2k.utils.VersionFormater;
 
 public class DiamondPacketLib extends JavaPlugin {
-	
-	
-	//Instance of Main-Class
+
+	// Instance of Main-Class
 	private static DiamondPacketLib instance;
-	//Instance of VersionFormater
+	// Instance of VersionFormater
 	private VersionFormater versionFormater;
-	//Instance of PacketInjector
+	// Instance of PacketInjector
 	private PacketInjector packetInjector;
 
 	@Override
@@ -22,36 +21,30 @@ public class DiamondPacketLib extends JavaPlugin {
 		instance = this;
 		versionFormater = new VersionFormater();
 		packetInjector = new PacketInjector();
-		
+
 		getServer().getPluginManager().registerEvents(new PlayerJoinQuitEvent(), this);
-		
-		//On reload inject the Listener again
-	    Bukkit.getOnlinePlayers()
-        .forEach(
-            player ->
-                getPacketInjector().injectPlayer(player));
+
+		// On reload inject the Listener again
+		Bukkit.getOnlinePlayers().forEach(player -> getPacketInjector().injectPlayer(player));
 	}
-	
+
 	@Override
 	public void onDisable() {
-		//On reload uninject the Listener (in case of a reload (Players are online) they will get reinjected on enable
-		 Bukkit.getOnlinePlayers()
-	        .forEach(
-	            player ->
-	                getPacketInjector().uninjectPlayer(player));
+		// On reload uninject the Listener (in case of a reload (Players are online)
+		// they will get reinjected on enable
+		Bukkit.getOnlinePlayers().forEach(player -> getPacketInjector().uninjectPlayer(player));
 	}
-	
+
 	public static DiamondPacketLib getInstance() {
 		return instance;
 	}
-	
+
 	public VersionFormater getVersionFormater() {
 		return versionFormater;
 	}
-	
+
 	public PacketInjector getPacketInjector() {
 		return packetInjector;
 	}
-	
 
 }
