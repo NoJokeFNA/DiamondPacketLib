@@ -3,6 +3,8 @@
 
 DiamondPacketLib is a Spigot Packet Library optimzied for 1.8 - latest Minecraft Versions that made working with Packets as easy as using CraftBukkit Events
 
+(The Code follows Google Checkstyle)
+
 ## Features
 
 - Simple Events
