@@ -7,7 +7,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public class DiamondPacketSendEvent extends Event implements Cancellable {
-
   private final Player player;
   private final Object packet;
   private final Channel channel;
