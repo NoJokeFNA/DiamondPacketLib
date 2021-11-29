@@ -13,9 +13,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.channel.ChannelPromise;
 
 public class ModernPacketReader {
-
 	public void removePlayer(final Player player) {
-
 		try {
 			final Object handle = player.getClass().getMethod("getHandle").invoke(player);
 			final Object playerConnection = handle.getClass().getField("b").get(handle);
@@ -38,18 +36,13 @@ public class ModernPacketReader {
 			final Channel channel = (Channel) networkManager.getClass().getField("k").get(networkManager);
 
 			final ChannelDuplexHandler channelDuplexHandler = new ChannelDuplexHandler() {
-
 				@Override
 				public void channelRead(final ChannelHandlerContext channelHandlerContext, final Object packet)
 						throws Exception {
 
 					try {
-						DiamondPacketReceiveEvent diamondPacketReceiveEvent = new DiamondPacketReceiveEvent(player,
-								packet, channel);
-
-						Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(),
-								() -> Bukkit.getPluginManager().callEvent(diamondPacketReceiveEvent));
-
+						DiamondPacketReceiveEvent diamondPacketReceiveEvent = new DiamondPacketReceiveEvent(player, packet, channel);
+						Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(), () -> Bukkit.getPluginManager().callEvent(diamondPacketReceiveEvent));
 						if (diamondPacketReceiveEvent.isCancelled()) {
 							return;
 						}
@@ -61,30 +54,25 @@ public class ModernPacketReader {
 				}
 
 				@Override
-				public void write(final ChannelHandlerContext channelHandlerContext, final Object packet,
-						final ChannelPromise channelPromise) throws Exception {
-
+				public void write(final ChannelHandlerContext channelHandlerContext, final Object packet, final ChannelPromise channelPromise) throws Exception {
 					try {
-						DiamondPacketSendEvent diamondPacketSendEvent = new DiamondPacketSendEvent(player, packet,
-								channel);
+						DiamondPacketSendEvent diamondPacketSendEvent = new DiamondPacketSendEvent(player, packet, channel);
 
 						// Has to be made with a scheduler as Spigot throws Issues without
-						Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(),
-								() -> Bukkit.getPluginManager().callEvent(diamondPacketSendEvent));
-
+						Bukkit.getScheduler().runTask(DiamondPacketLib.getInstance(), () -> Bukkit.getPluginManager().callEvent(diamondPacketSendEvent));
 						if (diamondPacketSendEvent.isCancelled()) {
 							return;
 						}
 					} catch (Exception exception) {
 						exception.printStackTrace();
 					}
+
 					super.write(channelHandlerContext, packet, channelPromise);
 				}
 			};
 
 			final ChannelPipeline channelPipeline = channel.pipeline();
 			channelPipeline.addBefore("packet_handler", "DiamondPacketLib" + player.getName(), channelDuplexHandler);
-
 		} catch (final Exception exception) {
 			exception.printStackTrace();
 		}

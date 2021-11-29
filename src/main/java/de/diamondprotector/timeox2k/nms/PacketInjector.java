@@ -8,15 +8,14 @@ import de.diamondprotector.timeox2k.nms.reader.LegacyPacketReader;
 import de.diamondprotector.timeox2k.nms.reader.ModernPacketReader;
 
 public class PacketInjector {
-
 	private LegacyPacketReader legacyPacketReader;
 	private ModernPacketReader modernPacketReader;
 
 	public void injectPlayer(final Player player) {
-		String formatedVersion = DiamondPacketLib.getInstance().getVersionFormater().getVersionString(
-				Bukkit.getServer().getClass().getPackage().getName().replace("org.bukkit.craftbukkit.", ""));
+    final String packageName = Bukkit.getServer().getClass().getPackage().getName().replace("org.bukkit.craftbukkit.", "");
+		final String formattedVersion = DiamondPacketLib.getInstance().getVersionFormatter().getVersionString(packageName);
 
-		if (formatedVersion.equalsIgnoreCase("modern")) {
+		if (formattedVersion.equalsIgnoreCase("modern")) {
 			this.modernPacketReader = new ModernPacketReader();
 			modernPacketReader.injectPlayer(player);
 		} else {
@@ -26,10 +25,10 @@ public class PacketInjector {
 	}
 
 	public void uninjectPlayer(final Player player) {
-		String formatedVersion = DiamondPacketLib.getInstance().getVersionFormater().getVersionString(
-				Bukkit.getServer().getClass().getPackage().getName().replace("org.bukkit.craftbukkit.", ""));
+    final String packageName = Bukkit.getServer().getClass().getPackage().getName().replace("org.bukkit.craftbukkit.", "");
+		final String formattedVersion = DiamondPacketLib.getInstance().getVersionFormatter().getVersionString(packageName);
 
-		if (formatedVersion.equalsIgnoreCase("modern")) {
+		if (formattedVersion.equalsIgnoreCase("modern")) {
 			this.modernPacketReader = new ModernPacketReader();
 			modernPacketReader.removePlayer(player);
 		} else {
