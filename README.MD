@@ -16,12 +16,14 @@ You may know the CraftBukkit PlayerJoinEvent, it is just as easy to use the Diam
 
 ## Example
 
-	@EventHandler
-	public void onReceive(DiamondPacketReceiveEvent event) {
-		final Player player = event.getPlayer();
-		
-		if(event.getPacket().getClass().getSimpleName().equalsIgnoreCase("PacketPlayInEnchantItem")) {
-			event.setCancelled(true);
-			player.sendMessage("§cEnchanting Items is not cool!");
-		}
-	}
+```java
+@EventHandler
+public void onReceive(DiamondPacketReceiveEvent event) {
+    final Player player = event.getPlayer();
+
+    if (event.getPacket().getClass().getSimpleName().equalsIgnoreCase("PacketPlayInEnchantItem")) {
+        event.setCancelled(true);
+        player.sendMessage("§cEnchanting Items is not cool!");
+    }
+}
+```
